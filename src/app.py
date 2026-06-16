@@ -156,13 +156,21 @@ def predict():
     })
 
 
+@app.route('/', methods=['GET'])
+def home():
+    return jsonify({
+        'status': 'online',
+        'message': 'Acesse /api/status para ver o estado do modelo.'
+    })
+
 @app.route('/api/status', methods=['GET'])
 def status():
     return jsonify({
         'model_loaded': model is not None,
-        'message': 'API de previsão está pronta.'
+        'message': 'API de previsao esta pronta.'
     })
 
+train_model()
 
 if __name__ == '__main__':
     train_model()
