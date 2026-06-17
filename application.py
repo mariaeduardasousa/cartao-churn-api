@@ -1,10 +1,24 @@
 import os
 import pandas as pd
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import xgboost as xgb
 from sklearn.model_selection import cross_val_score, train_test_split
 
 app = Flask(__name__)
+
+CORS(app, resources={
+    r"/api/*": {
+        "origins": [
+            "https://black-water-0f84cb510.7.azurestaticapps.net",
+            "http://localhost:5173",
+            "http://localhost:3000"
+        ],
+        "methods": ["POST", "GET", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    }
+})
+
 model = None
 model_columns = []
 
@@ -121,9 +135,12 @@ def train_model():
     app.logger.info(f'Modelo final treinado com {len(model_columns)} features.')
 
 
-@app.route('/api/predict', methods=['POST'])
+@app.route('/api/predict', methods=['POST', 'OPTIONS'])  # 🌟 Adicionado suporte a OPTIONS
 def predict():
     global model, model_columns
+
+    if request.method == 'OPTIONS':
+        return '', 200
 
     if model is None:
         return jsonify({
@@ -165,12 +182,14 @@ def home():
         'message': 'Acesse /api/status para ver o estado do modelo.'
     })
 
+
 @app.route('/api/status', methods=['GET'])
 def status():
     return jsonify({
         'model_loaded': model is not None,
         'message': 'API de previsao esta pronta.'
     })
+
 
 train_model()
 
