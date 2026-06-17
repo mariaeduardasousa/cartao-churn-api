@@ -191,7 +191,17 @@ def status():
     })
 
 
-train_model()
+def run_training_in_background():
+    try:
+        print("Iniciando treinamento do modelo XGBoost em background...")
+        train_model()
+        print("Treinamento em background concluído com sucesso!")
+    except Exception as e:
+        print(f"Erro ao treinar o modelo em background: {e}")
+
+training_thread = threading.Thread(target=run_training_in_background)
+training_thread.daemon = True 
+training_thread.start()
 
 if __name__ == '__main__':
     train_model()
