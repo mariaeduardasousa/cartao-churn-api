@@ -8,12 +8,14 @@ app = Flask(__name__)
 model = None
 model_columns = []
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 DATA_PATHS = [
-    os.path.join(os.path.dirname(__file__), '..', 'data', 'BankChurners.csv'),
-    os.path.join(os.path.dirname(__file__), '..', 'data', 'credit_card_churn.csv'),
-    os.path.join(os.path.dirname(__file__), '..', 'BankChurners.csv'),
-    os.path.join(os.path.dirname(__file__), '..', 'credit_card_churn.csv'),
-    os.path.join(os.path.dirname(__file__), '..', 'dataset.csv')
+    os.path.join(BASE_DIR, 'data', 'BankChurners.csv'),
+    os.path.join(BASE_DIR, 'data', 'credit_card_churn.csv'),
+    os.path.join(BASE_DIR, 'BankChurners.csv'),
+    os.path.join(BASE_DIR, 'credit_card_churn.csv'),
+    os.path.join(BASE_DIR, 'dataset.csv')
 ]
 
 DEFAULT_VALUES = {
