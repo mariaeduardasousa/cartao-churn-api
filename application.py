@@ -22,8 +22,6 @@ model_columns = []
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 DATA_PATHS = [
-    os.path.join(BASE_DIR, 'data', 'BankChurners.csv'),
-    os.path.join(BASE_DIR, 'data', 'credit_card_churn.csv'),
     os.path.join(BASE_DIR, 'BankChurners.csv'),
     os.path.join(BASE_DIR, 'credit_card_churn.csv'),
     os.path.join(BASE_DIR, 'dataset.csv')
