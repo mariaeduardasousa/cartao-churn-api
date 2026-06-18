@@ -139,7 +139,7 @@ def predict():
 
     if model is None:
         return jsonify({
-            'error': 'Modelo não está disponível. Coloque o arquivo CSV do dataset em data/credit_card_churn.csv ou na raiz.'
+            'error': 'Modelo não está disponível. Coloque o arquivo CSV do dataset na raiz.'
         }), 500
 
     data = request.get_json() or {}
@@ -147,16 +147,17 @@ def predict():
 
     for key, default in DEFAULT_VALUES.items():
         value = data.get(key, default)
-        sample[key] = value
+        if isinstance(default, int):
+            sample[key] = int(value)
+        elif isinstance(default, float):
+            sample[key] = float(value)
+        else:
+            sample[key] = str(value)
 
     sample_df = pd.DataFrame([sample])
     sample_df = preprocess_dataframe(sample_df)
     sample_df = pd.get_dummies(sample_df, drop_first=True)
-
-    for col in model_columns:
-        if col not in sample_df.columns:
-            sample_df[col] = 0
-    sample_df = sample_df[model_columns]
+    sample_df = sample_df.reindex(columns=model_columns, fill_value=0)
 
     probability = float(model.predict_proba(sample_df)[0, 1])
     label = 'Attrited Customer' if probability >= 0.5 else 'Existing Customer'
@@ -168,7 +169,6 @@ def predict():
         'confidence': confidence,
         'input': sample
     })
-
 
 @app.route('/', methods=['GET'])
 def home():
