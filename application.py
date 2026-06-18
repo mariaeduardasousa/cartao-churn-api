@@ -161,12 +161,10 @@ def predict():
 
     probability = float(model.predict_proba(sample_df)[0, 1])
     label = 'Attrited Customer' if probability >= 0.5 else 'Existing Customer'
-    confidence = f'{probability:.2f}'
 
     return jsonify({
         'probability': probability,
         'label': label,
-        'confidence': confidence,
         'input': sample
     })
 
