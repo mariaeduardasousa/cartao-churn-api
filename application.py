@@ -1,4 +1,5 @@
 import os
+import threading
 import pandas as pd
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -9,11 +10,7 @@ app = Flask(__name__)
 
 CORS(app, resources={
     r"/api/*": {
-        "origins": [
-            "https://black-water-0f84cb510.7.azurestaticapps.net",
-            "http://localhost:5173",
-            "http://localhost:3000"
-        ],
+        "origins": "*",
         "methods": ["POST", "GET", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization"]
     }
@@ -135,7 +132,7 @@ def train_model():
     app.logger.info(f'Modelo final treinado com {len(model_columns)} features.')
 
 
-@app.route('/api/predict', methods=['POST', 'OPTIONS'])  # 🌟 Adicionado suporte a OPTIONS
+@app.route('/api/predict', methods=['POST', 'OPTIONS'])
 def predict():
     global model, model_columns
 
@@ -187,7 +184,7 @@ def home():
 def status():
     return jsonify({
         'model_loaded': model is not None,
-        'message': 'API de previsao esta pronta.'
+        'message': 'API de previsão está pronta.'
     })
 
 
@@ -199,10 +196,12 @@ def run_training_in_background():
     except Exception as e:
         print(f"Erro ao treinar o modelo em background: {e}")
 
+
 training_thread = threading.Thread(target=run_training_in_background)
-training_thread.daemon = True 
-training_thread.start()
+training_thread.daemon = True
 
 if __name__ == '__main__':
-    train_model()
-    app.run(host='0.0.0.0', port=5000)
+    training_thread.start()
+    app.run(host='0.0.0.0', port=5000, debug=False)
+else:
+    training_thread.start()
